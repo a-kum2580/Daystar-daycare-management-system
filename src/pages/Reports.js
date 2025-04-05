@@ -1,26 +1,47 @@
 import React from "react";
-import { DashboardLayout } from "../components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from '../components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 
 export function Reports() {
   return (
-    <DashboardLayout>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Reports</h1>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Reports</h1>
+        <Button>Generate New Report</Button>
       </div>
-      
-      <Card className="mb-6">
+
+      <Card>
         <CardHeader>
-          <CardTitle>Reports & Analytics</CardTitle>
-          <CardDescription>Generate and view daycare reports</CardDescription>
+          <CardTitle>Available Reports</CardTitle>
+          <CardDescription>View and manage system reports</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px] flex items-center justify-center border rounded-md border-dashed border-gray-300 bg-gray-50">
-            <p className="text-gray-500">Reporting interface will be implemented here</p>
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Report Name</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Last Generated</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>Monthly Attendance</TableCell>
+                <TableCell>Attendance</TableCell>
+                <TableCell>2024-04-01</TableCell>
+                <TableCell>Ready</TableCell>
+                <TableCell>
+                  <Button variant="outline">View</Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
-    </DashboardLayout>
+    </div>
   );
 }
 

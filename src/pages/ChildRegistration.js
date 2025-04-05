@@ -1,38 +1,40 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Textarea } from '../components/ui/textarea';
 
 export function ChildRegistration() {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    dateOfBirth: "",
-    gender: "",
-    parentFirstName: "",
-    parentLastName: "",
-    parentPhone: "",
-    parentEmail: "",
-    emergencyContactName: "",
-    emergencyContactPhone: "",
-    emergencyContactRelationship: "",
-    sessionType: "full-day", // Default to full-day
-    specialNeeds: "",
-    allergies: "",
-    medicalConditions: "",
-    dietaryRestrictions: "",
-    additionalNotes: "",
+    childName: '',
+    dateOfBirth: '',
+    gender: '',
+    allergies: '',
+    medicalConditions: '',
+    emergencyContact: '',
+    emergencyPhone: '',
+    parentName: '',
+    parentPhone: '',
+    parentEmail: '',
+    address: '',
+    preferredDays: [],
+    sessionType: '',
+    additionalNotes: ''
   });
   
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
     
     // Clear error when user starts typing
     if (errors[name]) {
@@ -47,22 +49,19 @@ export function ChildRegistration() {
     const newErrors = {};
     
     // Child information validation
-    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
-    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!formData.childName.trim()) newErrors.childName = "Child's name is required";
     if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of birth is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
     
     // Parent information validation
-    if (!formData.parentFirstName.trim()) newErrors.parentFirstName = "Parent first name is required";
-    if (!formData.parentLastName.trim()) newErrors.parentLastName = "Parent last name is required";
+    if (!formData.parentName.trim()) newErrors.parentName = "Parent's name is required";
     if (!formData.parentPhone.trim()) newErrors.parentPhone = "Parent phone number is required";
     if (!formData.parentEmail.trim()) newErrors.parentEmail = "Parent email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.parentEmail)) newErrors.parentEmail = "Email is invalid";
     
     // Emergency contact validation
-    if (!formData.emergencyContactName.trim()) newErrors.emergencyContactName = "Emergency contact name is required";
-    if (!formData.emergencyContactPhone.trim()) newErrors.emergencyContactPhone = "Emergency contact phone is required";
-    if (!formData.emergencyContactRelationship.trim()) newErrors.emergencyContactRelationship = "Emergency contact relationship is required";
+    if (!formData.emergencyContact.trim()) newErrors.emergencyContact = "Emergency contact name is required";
+    if (!formData.emergencyPhone.trim()) newErrors.emergencyPhone = "Emergency contact phone is required";
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -75,42 +74,35 @@ export function ChildRegistration() {
       return;
     }
     
-    setIsLoading(true);
-    
     try {
       // TODO: Implement actual child registration logic
       console.log("Registering child:", formData);
       
       // Simulate successful registration
       setTimeout(() => {
-        setIsLoading(false);
         setIsSuccess(true);
       }, 1000);
     } catch (error) {
       console.error("Child registration failed:", error);
-      setIsLoading(false);
     }
   };
 
   const handleAddAnother = () => {
     setFormData({
-      firstName: "",
-      lastName: "",
-      dateOfBirth: "",
-      gender: "",
-      parentFirstName: "",
-      parentLastName: "",
-      parentPhone: "",
-      parentEmail: "",
-      emergencyContactName: "",
-      emergencyContactPhone: "",
-      emergencyContactRelationship: "",
-      sessionType: "full-day",
-      specialNeeds: "",
-      allergies: "",
-      medicalConditions: "",
-      dietaryRestrictions: "",
-      additionalNotes: "",
+      childName: '',
+      dateOfBirth: '',
+      gender: '',
+      allergies: '',
+      medicalConditions: '',
+      emergencyContact: '',
+      emergencyPhone: '',
+      parentName: '',
+      parentPhone: '',
+      parentEmail: '',
+      address: '',
+      preferredDays: [],
+      sessionType: '',
+      additionalNotes: ''
     });
     setErrors({});
     setIsSuccess(false);
@@ -132,7 +124,7 @@ export function ChildRegistration() {
             </div>
             <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Registration Successful!</h2>
             <p className="mt-2 text-sm text-gray-600">
-              {formData.firstName} {formData.lastName} has been successfully registered.
+              {formData.childName} has been successfully registered.
             </p>
           </div>
 
@@ -158,291 +150,209 @@ export function ChildRegistration() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto px-4 py-8">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-extrabold text-gray-900">Child Registration</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Please fill out the form below to register a new child at DayStar Daycare Centre.
-          </p>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Child Registration</h1>
+          <p className="text-gray-600">Please fill out the form below to register your child at Daystar Daycare Center.</p>
         </div>
 
-        <div className="bg-white p-8 rounded-lg shadow-md">
+        <Card>
+          <CardHeader>
+            <CardTitle>Registration Form</CardTitle>
+            <CardDescription>Enter your child's information below</CardDescription>
+          </CardHeader>
+          <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Child Information Section */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Child Information</h3>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Child Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Child Information</h3>
+                  
                 <div className="space-y-2">
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
-                  <input
-                    id="firstName"
-                    name="firstName"
-                    type="text"
-                    value={formData.firstName}
+                    <Label htmlFor="childName">Child's Full Name</Label>
+                    <Input
+                      id="childName"
+                      name="childName"
+                      value={formData.childName}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.firstName ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                  />
-                  {errors.firstName && <p className="text-xs text-red-500">{errors.firstName}</p>}
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
-                  <input
-                    id="lastName"
-                    name="lastName"
-                    type="text"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.lastName ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                  />
-                  {errors.lastName && <p className="text-xs text-red-500">{errors.lastName}</p>}
-                </div>
+                      required
+                    />
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
                 <div className="space-y-2">
-                  <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">Date of Birth</label>
-                  <input
+                    <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                    <Input
                     id="dateOfBirth"
                     name="dateOfBirth"
                     type="date"
                     value={formData.dateOfBirth}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.dateOfBirth ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+                      required
                   />
-                  {errors.dateOfBirth && <p className="text-xs text-red-500">{errors.dateOfBirth}</p>}
                 </div>
+
                 <div className="space-y-2">
-                  <label htmlFor="gender" className="block text-sm font-medium text-gray-700">Gender</label>
-                  <select
-                    id="gender"
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.gender ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                  >
-                    <option value="">Select gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                  </select>
-                  {errors.gender && <p className="text-xs text-red-500">{errors.gender}</p>}
+                    <Label htmlFor="gender">Gender</Label>
+                    <Select
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-              </div>
+
+                {/* Health Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Health Information</h3>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="allergies">Allergies</Label>
+                    <Input
+                      id="allergies"
+                      name="allergies"
+                      value={formData.allergies}
+                      onChange={handleChange}
+                      placeholder="List any allergies (if none, write 'None')"
+                    />
             </div>
 
-            {/* Parent Information Section */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Parent/Guardian Information</h3>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <label htmlFor="parentFirstName" className="block text-sm font-medium text-gray-700">First Name</label>
-                  <input
-                    id="parentFirstName"
-                    name="parentFirstName"
-                    type="text"
-                    value={formData.parentFirstName}
+                    <Label htmlFor="medicalConditions">Medical Conditions</Label>
+                    <Input
+                      id="medicalConditions"
+                      name="medicalConditions"
+                      value={formData.medicalConditions}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.parentFirstName ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+                      placeholder="List any medical conditions (if none, write 'None')"
                   />
-                  {errors.parentFirstName && <p className="text-xs text-red-500">{errors.parentFirstName}</p>}
+                  </div>
                 </div>
+
+                {/* Emergency Contact */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Emergency Contact</h3>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="emergencyContact">Emergency Contact Name</Label>
+                    <Input
+                      id="emergencyContact"
+                      name="emergencyContact"
+                      value={formData.emergencyContact}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
                 <div className="space-y-2">
-                  <label htmlFor="parentLastName" className="block text-sm font-medium text-gray-700">Last Name</label>
-                  <input
-                    id="parentLastName"
-                    name="parentLastName"
-                    type="text"
-                    value={formData.parentLastName}
+                    <Label htmlFor="emergencyPhone">Emergency Phone Number</Label>
+                    <Input
+                      id="emergencyPhone"
+                      name="emergencyPhone"
+                      type="tel"
+                      value={formData.emergencyPhone}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.parentLastName ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+                      required
                   />
-                  {errors.parentLastName && <p className="text-xs text-red-500">{errors.parentLastName}</p>}
+                  </div>
                 </div>
+
+                {/* Parent Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Parent/Guardian Information</h3>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="parentName">Parent/Guardian Name</Label>
+                    <Input
+                      id="parentName"
+                      name="parentName"
+                      value={formData.parentName}
+                      onChange={handleChange}
+                      required
+                    />
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
                 <div className="space-y-2">
-                  <label htmlFor="parentPhone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-                  <input
+                    <Label htmlFor="parentPhone">Phone Number</Label>
+                    <Input
                     id="parentPhone"
                     name="parentPhone"
                     type="tel"
                     value={formData.parentPhone}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.parentPhone ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+                      required
                   />
-                  {errors.parentPhone && <p className="text-xs text-red-500">{errors.parentPhone}</p>}
                 </div>
+
                 <div className="space-y-2">
-                  <label htmlFor="parentEmail" className="block text-sm font-medium text-gray-700">Email Address</label>
-                  <input
+                    <Label htmlFor="parentEmail">Email</Label>
+                    <Input
                     id="parentEmail"
                     name="parentEmail"
                     type="email"
                     value={formData.parentEmail}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.parentEmail ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                  />
-                  {errors.parentEmail && <p className="text-xs text-red-500">{errors.parentEmail}</p>}
-                </div>
-              </div>
-            </div>
-
-            {/* Emergency Contact Section */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Emergency Contact</h3>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <label htmlFor="emergencyContactName" className="block text-sm font-medium text-gray-700">Name</label>
-                  <input
-                    id="emergencyContactName"
-                    name="emergencyContactName"
-                    type="text"
-                    value={formData.emergencyContactName}
-                    onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.emergencyContactName ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                  />
-                  {errors.emergencyContactName && <p className="text-xs text-red-500">{errors.emergencyContactName}</p>}
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="emergencyContactPhone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-                  <input
-                    id="emergencyContactPhone"
-                    name="emergencyContactPhone"
-                    type="tel"
-                    value={formData.emergencyContactPhone}
-                    onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.emergencyContactPhone ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                  />
-                  {errors.emergencyContactPhone && <p className="text-xs text-red-500">{errors.emergencyContactPhone}</p>}
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <div className="space-y-2">
-                  <label htmlFor="emergencyContactRelationship" className="block text-sm font-medium text-gray-700">Relationship to Child</label>
-                  <input
-                    id="emergencyContactRelationship"
-                    name="emergencyContactRelationship"
-                    type="text"
-                    value={formData.emergencyContactRelationship}
-                    onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.emergencyContactRelationship ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                  />
-                  {errors.emergencyContactRelationship && <p className="text-xs text-red-500">{errors.emergencyContactRelationship}</p>}
-                </div>
-              </div>
-            </div>
-
-            {/* Session Information */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Session Information</h3>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Session Type</label>
-                <div className="flex space-x-4">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      name="sessionType"
-                      value="half-day"
-                      checked={formData.sessionType === "half-day"}
-                      onChange={handleChange}
-                      className="form-radio h-4 w-4 text-blue-600"
+                      required
                     />
-                    <span className="ml-2">Half-Day (2,000K)</span>
-                  </label>
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      name="sessionType"
-                      value="full-day"
-                      checked={formData.sessionType === "full-day"}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Address</Label>
+                    <Textarea
+                      id="address"
+                      name="address"
+                      value={formData.address}
                       onChange={handleChange}
-                      className="form-radio h-4 w-4 text-blue-600"
+                      required
                     />
-                    <span className="ml-2">Full-Day (5,000K)</span>
-                  </label>
-                </div>
-              </div>
             </div>
+                </div>
 
-            {/* Special Needs Section */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Special Information</h3>
-              <div className="space-y-4">
+                {/* Enrollment Details */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Enrollment Details</h3>
+
                 <div className="space-y-2">
-                  <label htmlFor="allergies" className="block text-sm font-medium text-gray-700">Allergies</label>
-                  <textarea
-                    id="allergies"
-                    name="allergies"
-                    rows="2"
-                    value={formData.allergies}
-                    onChange={handleChange}
-                    placeholder="List any allergies or leave blank if none"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
+                    <Label htmlFor="sessionType">Preferred Session Type</Label>
+                    <Select
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, sessionType: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select session type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="half-day">Half Day (Morning)</SelectItem>
+                        <SelectItem value="full-day">Full Day</SelectItem>
+                      </SelectContent>
+                    </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="medicalConditions" className="block text-sm font-medium text-gray-700">Medical Conditions</label>
-                  <textarea
-                    id="medicalConditions"
-                    name="medicalConditions"
-                    rows="2"
-                    value={formData.medicalConditions}
-                    onChange={handleChange}
-                    placeholder="List any medical conditions or leave blank if none"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="dietaryRestrictions" className="block text-sm font-medium text-gray-700">Dietary Restrictions</label>
-                  <textarea
-                    id="dietaryRestrictions"
-                    name="dietaryRestrictions"
-                    rows="2"
-                    value={formData.dietaryRestrictions}
-                    onChange={handleChange}
-                    placeholder="List any dietary restrictions or leave blank if none"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="additionalNotes" className="block text-sm font-medium text-gray-700">Additional Notes</label>
-                  <textarea
+                    <Label htmlFor="additionalNotes">Additional Notes</Label>
+                    <Textarea
                     id="additionalNotes"
                     name="additionalNotes"
-                    rows="3"
                     value={formData.additionalNotes}
                     onChange={handleChange}
-                    placeholder="Any additional information about the child"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Any additional information we should know"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-between pt-4">
-              <button
-                type="button"
-                onClick={handleBackToDashboard}
-                className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                disabled={isLoading}
-              >
-                {isLoading ? "Registering..." : "Register Child"}
-              </button>
+              <div className="flex justify-end">
+                <Button type="submit" size="lg">Submit Registration</Button>
             </div>
           </form>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

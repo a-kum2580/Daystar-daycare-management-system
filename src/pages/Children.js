@@ -1,90 +1,49 @@
-import React, { useState, useEffect } from "react";
-import { DashboardLayout } from "../components/DashboardLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import React from "react";
 import { Button } from "../components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
-import { childService } from "../services";
-import { toast } from "sonner";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 
 export function Children() {
-  const [children, setChildren] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetchChildren();
-  }, []);
-
-  const fetchChildren = async () => {
-    try {
-      setLoading(true);
-      const data = await childService.getAllChildren();
-      setChildren(data);
-      setError(null);
-    } catch (err) {
-      console.error("Error fetching children:", err);
-      setError("Failed to load children data");
-      toast.error("Failed to load children data");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <DashboardLayout>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Child Management</h1>
-        <Button>Add New Child</Button>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Children</h1>
+        <Button>Add Child</Button>
       </div>
-      
-      <Card className="mb-6">
+
+      <Card>
         <CardHeader>
-          <CardTitle>Children Records</CardTitle>
-          <CardDescription>View and manage children records</CardDescription>
+          <CardTitle>Children List</CardTitle>
+          <CardDescription>Manage children's information and records</CardDescription>
         </CardHeader>
         <CardContent>
-          {loading ? (
-            <div className="h-[300px] flex items-center justify-center">
-              <p className="text-gray-500">Loading children data...</p>
-            </div>
-          ) : error ? (
-            <div className="h-[300px] flex items-center justify-center">
-              <p className="text-red-500">{error}</p>
-            </div>
-          ) : children.length === 0 ? (
-            <div className="h-[300px] flex items-center justify-center border rounded-md border-dashed border-gray-300 bg-gray-50">
-              <p className="text-gray-500">No children records found</p>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Age</TableHead>
-                  <TableHead>Parent/Guardian</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {children.map((child) => (
-                  <TableRow key={child.id}>
-                    <TableCell>{child.first_name} {child.last_name}</TableCell>
-                    <TableCell>{child.age}</TableCell>
-                    <TableCell>{child.parent_name}</TableCell>
-                    <TableCell>{child.contact_number}</TableCell>
-                    <TableCell>
-                      <Button variant="outline" size="sm" className="mr-2">Edit</Button>
-                      <Button variant="destructive" size="sm">Delete</Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Age</TableHead>
+                <TableHead>Parent/Guardian</TableHead>
+                <TableHead>Class</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>John Doe</TableCell>
+                <TableCell>4 years</TableCell>
+                <TableCell>Jane Doe</TableCell>
+                <TableCell>Pre-K</TableCell>
+                <TableCell>Active</TableCell>
+                <TableCell>
+                  <Button variant="outline">Edit</Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
-    </DashboardLayout>
+    </div>
   );
 }
 

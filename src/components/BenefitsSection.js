@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export function BenefitsSection() {
   const benefits = [
@@ -72,25 +73,25 @@ export function BenefitsSection() {
           <div className="pt-10 pb-12 px-6 sm:pt-16 sm:px-16 lg:py-16 lg:pr-0 xl:py-20 xl:px-20">
             <div className="lg:self-center">
               <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                <span className="block">Ready to get started?</span>
-                <span className="block text-blue-500">Sign up for free today.</span>
+                <span className="block">Ready to Enroll Your Child?</span>
+                <span className="block text-blue-500">Join Our Daycare Family</span>
               </h2>
               <p className="mt-4 text-lg leading-6 text-gray-500">
-                Join hundreds of daycare centres already using DayStarConnect to improve their operations.
+                Give your child the best start in life. Our nurturing environment and professional staff are ready to support your child's growth and development.
               </p>
-              <a
-                href="/register"
+              <Link
+                to="/register-child"
                 className="mt-8 bg-blue-500 border border-transparent rounded-md shadow px-5 py-3 inline-flex items-center text-base font-medium text-white hover:bg-blue-600"
               >
-                Sign up for free
-              </a>
+                Enroll Your Child
+              </Link>
             </div>
           </div>
           <div className="relative -mt-6 aspect-w-5 aspect-h-3 md:aspect-w-2 md:aspect-h-1">
             <img
               className="transform translate-x-6 translate-y-6 rounded-md object-cover object-left-top sm:translate-x-16 lg:translate-y-20"
-              src="/images/dashboard-preview.jpg"
-              alt="App screenshot"
+              src="/images/happy-children.jpg"
+              alt="Happy children in daycare center"
             />
           </div>
         </div>
