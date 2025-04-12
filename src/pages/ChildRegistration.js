@@ -9,20 +9,18 @@ import { Textarea } from '../components/ui/textarea';
 
 export function ChildRegistration() {
   const [formData, setFormData] = useState({
-    childName: '',
+    firstName: '',
+    lastName: '',
     dateOfBirth: '',
     gender: '',
-    allergies: '',
-    medicalConditions: '',
-    emergencyContact: '',
-    emergencyPhone: '',
     parentName: '',
     parentPhone: '',
     parentEmail: '',
     address: '',
-    preferredDays: [],
-    sessionType: '',
-    additionalNotes: ''
+    medicalNotes: '',
+    allergies: '',
+    emergencyContact: '',
+    emergencyPhone: ''
   });
   
   const [errors, setErrors] = useState({});
@@ -49,7 +47,8 @@ export function ChildRegistration() {
     const newErrors = {};
     
     // Child information validation
-    if (!formData.childName.trim()) newErrors.childName = "Child's name is required";
+    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of birth is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
     
@@ -89,20 +88,18 @@ export function ChildRegistration() {
 
   const handleAddAnother = () => {
     setFormData({
-      childName: '',
+      firstName: '',
+      lastName: '',
       dateOfBirth: '',
       gender: '',
-      allergies: '',
-      medicalConditions: '',
-      emergencyContact: '',
-      emergencyPhone: '',
       parentName: '',
       parentPhone: '',
       parentEmail: '',
       address: '',
-      preferredDays: [],
-      sessionType: '',
-      additionalNotes: ''
+      medicalNotes: '',
+      allergies: '',
+      emergencyContact: '',
+      emergencyPhone: ''
     });
     setErrors({});
     setIsSuccess(false);
@@ -124,7 +121,7 @@ export function ChildRegistration() {
             </div>
             <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Registration Successful!</h2>
             <p className="mt-2 text-sm text-gray-600">
-              {formData.childName} has been successfully registered.
+              {formData.firstName} {formData.lastName} has been successfully registered.
             </p>
           </div>
 
@@ -159,28 +156,32 @@ export function ChildRegistration() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Registration Form</CardTitle>
-            <CardDescription>Enter your child's information below</CardDescription>
+            <CardTitle>Child Registration Form</CardTitle>
           </CardHeader>
           <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Child Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Child Information</h3>
-                  
-                <div className="space-y-2">
-                    <Label htmlFor="childName">Child's Full Name</Label>
+                <div>
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="lastName">Last Name</Label>
                     <Input
-                      id="childName"
-                      name="childName"
-                      value={formData.childName}
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
                     onChange={handleChange}
                       required
                     />
               </div>
-
-                <div className="space-y-2">
+                <div>
                     <Label htmlFor="dateOfBirth">Date of Birth</Label>
                     <Input
                     id="dateOfBirth"
@@ -191,10 +192,11 @@ export function ChildRegistration() {
                       required
                   />
                 </div>
-
-                <div className="space-y-2">
+                <div>
                     <Label htmlFor="gender">Gender</Label>
                     <Select
+                    name="gender"
+                    value={formData.gender}
                       onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
                     >
                       <SelectTrigger>
@@ -207,68 +209,7 @@ export function ChildRegistration() {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-
-                {/* Health Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Health Information</h3>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="allergies">Allergies</Label>
-                    <Input
-                      id="allergies"
-                      name="allergies"
-                      value={formData.allergies}
-                      onChange={handleChange}
-                      placeholder="List any allergies (if none, write 'None')"
-                    />
-            </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="medicalConditions">Medical Conditions</Label>
-                    <Input
-                      id="medicalConditions"
-                      name="medicalConditions"
-                      value={formData.medicalConditions}
-                    onChange={handleChange}
-                      placeholder="List any medical conditions (if none, write 'None')"
-                  />
-                  </div>
-                </div>
-
-                {/* Emergency Contact */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Emergency Contact</h3>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="emergencyContact">Emergency Contact Name</Label>
-                    <Input
-                      id="emergencyContact"
-                      name="emergencyContact"
-                      value={formData.emergencyContact}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="emergencyPhone">Emergency Phone Number</Label>
-                    <Input
-                      id="emergencyPhone"
-                      name="emergencyPhone"
-                      type="tel"
-                      value={formData.emergencyPhone}
-                    onChange={handleChange}
-                      required
-                  />
-                  </div>
-                </div>
-
-                {/* Parent Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Parent/Guardian Information</h3>
-                  
-                  <div className="space-y-2">
+                <div>
                     <Label htmlFor="parentName">Parent/Guardian Name</Label>
                     <Input
                       id="parentName"
@@ -278,9 +219,8 @@ export function ChildRegistration() {
                       required
                     />
               </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="parentPhone">Phone Number</Label>
+                <div>
+                  <Label htmlFor="parentPhone">Parent Phone</Label>
                     <Input
                     id="parentPhone"
                     name="parentPhone"
@@ -290,9 +230,8 @@ export function ChildRegistration() {
                       required
                   />
                 </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="parentEmail">Email</Label>
+                <div>
+                  <Label htmlFor="parentEmail">Parent Email</Label>
                     <Input
                     id="parentEmail"
                     name="parentEmail"
@@ -302,10 +241,9 @@ export function ChildRegistration() {
                       required
                     />
                   </div>
-
-                  <div className="space-y-2">
+                <div>
                     <Label htmlFor="address">Address</Label>
-                    <Textarea
+                  <Input
                       id="address"
                       name="address"
                       value={formData.address}
@@ -314,41 +252,49 @@ export function ChildRegistration() {
                     />
             </div>
                 </div>
-
-                {/* Enrollment Details */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Enrollment Details</h3>
-
-                <div className="space-y-2">
-                    <Label htmlFor="sessionType">Preferred Session Type</Label>
-                    <Select
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, sessionType: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select session type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="half-day">Half Day (Morning)</SelectItem>
-                        <SelectItem value="full-day">Full Day</SelectItem>
-                      </SelectContent>
-                    </Select>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="additionalNotes">Additional Notes</Label>
-                    <Textarea
-                    id="additionalNotes"
-                    name="additionalNotes"
-                    value={formData.additionalNotes}
+              <div>
+                <Label htmlFor="medicalNotes">Medical Notes</Label>
+                <Textarea
+                  id="medicalNotes"
+                  name="medicalNotes"
+                  value={formData.medicalNotes}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <Label htmlFor="allergies">Allergies</Label>
+                <Textarea
+                  id="allergies"
+                  name="allergies"
+                  value={formData.allergies}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="emergencyContact">Emergency Contact Name</Label>
+                  <Input
+                    id="emergencyContact"
+                    name="emergencyContact"
+                    value={formData.emergencyContact}
                     onChange={handleChange}
-                      placeholder="Any additional information we should know"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="emergencyPhone">Emergency Contact Phone</Label>
+                  <Input
+                    id="emergencyPhone"
+                    name="emergencyPhone"
+                    type="tel"
+                    value={formData.emergencyPhone}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
               </div>
-            </div>
-
               <div className="flex justify-end">
-                <Button type="submit" size="lg">Submit Registration</Button>
+                <Button type="submit">Register Child</Button>
             </div>
           </form>
           </CardContent>

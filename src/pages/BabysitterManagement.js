@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BabysitterForm from "../components/BabysitterForm";
+import authService from "../services/authService";
+
+// Payment rates
+const PAYMENT_RATES = {
+  HALF_DAY: 2000,
+  FULL_DAY: 5000
+};
 
 // Sample data - would be replaced with API calls
 const sampleBabysitters = [
@@ -20,6 +27,7 @@ const sampleBabysitters = [
     childrenAssigned: 3,
     paymentRate: 5000,
     lastPaymentDate: "2023-06-15",
+    sessionType: "full-day"
   },
   {
     id: 2,
@@ -37,6 +45,7 @@ const sampleBabysitters = [
     childrenAssigned: 4,
     paymentRate: 5000,
     lastPaymentDate: "2023-06-15",
+    sessionType: "half-day"
   },
   {
     id: 3,
@@ -54,6 +63,7 @@ const sampleBabysitters = [
     childrenAssigned: 0,
     paymentRate: 5000,
     lastPaymentDate: "2023-05-20",
+    sessionType: "full-day"
   },
   {
     id: 4,
@@ -71,6 +81,7 @@ const sampleBabysitters = [
     childrenAssigned: 2,
     paymentRate: 5000,
     lastPaymentDate: "2023-06-15",
+    sessionType: "half-day"
   },
 ];
 
@@ -85,55 +96,67 @@ export function BabysitterManagement() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate API call to fetch babysitters
-    const fetchBabysitters = () => {
-      setTimeout(() => {
-        setBabysitters(sampleBabysitters);
-        setIsLoading(false);
-      }, 1000);
-    };
-
     fetchBabysitters();
   }, []);
 
+  const fetchBabysitters = () => {
+    try {
+      const allBabysitters = authService.getAllBabysitters();
+      setBabysitters(allBabysitters);
+    } catch (error) {
+      console.error('Error fetching babysitters:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const calculatePayment = (babysitter) => {
+    if (!babysitter.childrenAssigned || babysitter.status !== 'active') return 0;
+    
+    const rate = babysitter.sessionType === 'full-day' ? PAYMENT_RATES.FULL_DAY : PAYMENT_RATES.HALF_DAY;
+    return rate * babysitter.childrenAssigned;
+  };
+
   const handleAddBabysitter = () => {
     setShowAddForm(true);
+    setShowEditForm(false);
+    setSelectedBabysitter(null);
   };
 
   const handleEditBabysitter = (babysitter) => {
     setSelectedBabysitter(babysitter);
     setShowEditForm(true);
+    setShowAddForm(false);
   };
 
   const handleViewDetails = (babysitter) => {
-    setSelectedBabysitter(babysitter);
-    // In a real app, this would navigate to a detailed view
-    // navigate(`/babysitters/${babysitter.id}`);
+    navigate(`/babysitters/${babysitter.id}`);
   };
 
   const handleBackToDashboard = () => {
-    navigate("/dashboard");
+    navigate('/dashboard');
   };
 
-  const handleFormSubmit = (formData) => {
-    if (showEditForm) {
-      // Update existing babysitter
-      const updatedBabysitters = babysitters.map(babysitter => 
-        babysitter.id === selectedBabysitter.id 
-          ? { ...formData, id: babysitter.id } 
-          : babysitter
-      );
-      setBabysitters(updatedBabysitters);
+  const handleFormSubmit = async (formData) => {
+    try {
+      if (showAddForm) {
+        // Register new babysitter
+        await authService.register({
+          ...formData,
+          role: 'babysitter',
+          status: 'active'
+        });
+      } else if (showEditForm && selectedBabysitter) {
+        // Update existing babysitter
+        await authService.updateBabysitterProfile(selectedBabysitter.id, formData);
+      }
+      
+      fetchBabysitters();
+      setShowAddForm(false);
       setShowEditForm(false);
       setSelectedBabysitter(null);
-    } else {
-      // Add new babysitter
-      const newBabysitter = {
-        ...formData,
-        id: babysitters.length > 0 ? Math.max(...babysitters.map(b => b.id)) + 1 : 1,
-      };
-      setBabysitters([...babysitters, newBabysitter]);
-      setShowAddForm(false);
+    } catch (error) {
+      console.error('Error saving babysitter:', error);
     }
   };
 
@@ -255,6 +278,12 @@ export function BabysitterManagement() {
                     Children
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Session Type
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Payment
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Last Payment
                   </th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -303,6 +332,12 @@ export function BabysitterManagement() {
                         {babysitter.childrenAssigned}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {babysitter.sessionType === 'full-day' ? 'Full Day' : 'Half Day'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {calculatePayment(babysitter).toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(babysitter.lastPaymentDate).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -325,7 +360,7 @@ export function BabysitterManagement() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500">
+                    <td colSpan="9" className="px-6 py-4 text-center text-sm text-gray-500">
                       No babysitters found matching your criteria.
                     </td>
                   </tr>

@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 
 export function HeroSection() {
+  const imagePath = "/images/3.jpg";
+
   return (
     <div className="relative bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto">
@@ -18,16 +20,9 @@ export function HeroSection() {
               </p>
               <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                 <div className="rounded-md shadow">
-                  <Link to="/register-child">
+                  <Link to="/enroll-child">
                     <Button size="lg">
                       Enroll Your Child
-                    </Button>
-                  </Link>
-                </div>
-                <div className="mt-3 sm:mt-0 sm:ml-3">
-                  <Link to="/about">
-                    <Button variant="outline" size="lg">
-                      Learn More
                     </Button>
                   </Link>
                 </div>
@@ -36,12 +31,22 @@ export function HeroSection() {
           </main>
         </div>
       </div>
-      <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-        <img
-          className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
-          src="/images/hero-image.jpg"
-          alt="Daycare center with children playing"
-        />
+      <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2" style={{ height: '100vh' }}>
+        <div className="relative h-full w-full">
+          <img
+            src={imagePath}
+            alt="Daystar Daycare Center"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{
+              minHeight: '100vh',
+              width: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center',
+              imageRendering: 'crisp-edges'
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+        </div>
       </div>
     </div>
   );

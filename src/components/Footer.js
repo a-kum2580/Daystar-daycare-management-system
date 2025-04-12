@@ -38,8 +38,8 @@ export function Footer() {
             <h4 className="font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-2 text-gray-600">
               <li>Email: info@daystardaycare.com</li>
-              <li>Phone: +260 97X XXX XXX</li>
-              <li>Address: Lusaka, Zambia</li>
+              <li>Phone: +256 700 123 456</li>
+              <li>Address: Kampala, Uganda</li>
               <li>Hours: Mon-Fri, 7:00 AM - 6:00 PM</li>
             </ul>
           </div>

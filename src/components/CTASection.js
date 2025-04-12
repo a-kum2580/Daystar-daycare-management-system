@@ -14,21 +14,18 @@ export function CTASection() {
             Make a difference in children's lives while earning competitive pay and flexible hours
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="bg-white text-blue-600 hover:bg-blue-50"
-              asChild
+            <Link
+              to="/register"
+              className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-800 hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              <Link to="/register">Apply as Babysitter</Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-white border-white hover:bg-blue-500 hover:text-white"
-              asChild
+              Apply as Babysitter
+            </Link>
+            <Link
+              to="/login"
+              className="inline-flex items-center justify-center px-6 py-3 border border-white text-base font-medium rounded-md text-white bg-transparent hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              <Link to="/login">Babysitter Login</Link>
-            </Button>
+              Babysitter Login
+            </Link>
           </div>
         </div>
       </div>

@@ -7,8 +7,10 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 
 const PAYMENT_RATES = {
-  'half-day': 2000,
-  'full-day': 5000
+  regular: 50000,    // UGX per child per session
+  overnight: 100000, // UGX per child per session
+  emergency: 75000,  // UGX per child per session
+  special_event: 60000 // UGX per child per session
 };
 
 export function BabysitterPayments() {
@@ -43,6 +45,10 @@ export function BabysitterPayments() {
     setPayments(payments.map(payment => 
       payment.id === paymentId ? { ...payment, status: 'cleared' } : payment
     ));
+  };
+
+  const formatCurrency = (amount) => {
+    return amount.toLocaleString() + ' UGX';
   };
 
   return (
@@ -138,7 +144,7 @@ export function BabysitterPayments() {
                   <TableCell>{payment.babysitter}</TableCell>
                   <TableCell>{payment.sessionType}</TableCell>
                   <TableCell>{payment.numberOfChildren}</TableCell>
-                  <TableCell>{payment.amount.toLocaleString()}K</TableCell>
+                  <TableCell>{formatCurrency(payment.amount)}</TableCell>
                   <TableCell>
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       payment.status === 'pending' 

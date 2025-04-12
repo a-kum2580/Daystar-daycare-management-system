@@ -1,27 +1,34 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import authService from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
     try {
-      // TODO: Implement actual login logic
-      console.log("Logging in with:", email, password);
+      const response = await authService.login({ email, password });
+      login(response.user); // Update the auth context
       
-      // Simulate successful login
-      setTimeout(() => {
-        setIsLoading(false);
+      if (response.user.role === 'manager') {
         navigate("/dashboard");
-      }, 1000);
+      } else if (response.user.role === 'babysitter') {
+        navigate("/babysitter-dashboard");
+      }
     } catch (error) {
       console.error("Login failed:", error);
+      setError(error.message || "Login failed. Please check your credentials.");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -48,6 +55,12 @@ export function Login() {
           <p className="text-center text-gray-600 mb-6">
             Enter your credentials to access your account
           </p>
+          
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {error}
+            </div>
+          )}
           
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">

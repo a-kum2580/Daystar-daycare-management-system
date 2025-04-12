@@ -1,4 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { formatCurrency } from '../utils/formatters';
+import { useNavigate } from 'react-router-dom';
+import incidentService from '../services/incidentService';
+import { Button } from '../components/ui/button';
+import { Select } from '../components/ui/select';
 
 // Sample data - would be replaced with real data from API/database
 const sampleData = {
@@ -6,9 +11,9 @@ const sampleData = {
   totalChildren: 25,
   activeBabysitters: 4,
   totalBabysitters: 6,
-  todayIncome: 85000,
-  weeklyIncome: 425000,
-  pendingPayments: 12500,
+  todayIncome: 850000,
+  weeklyIncome: 4250000,
+  pendingPayments: 1250000,
   recentIncidents: 2,
   notifications: [
     { id: 1, type: "info", message: "New child enrollment request from Sarah Johnson", time: "1h ago" },
@@ -19,6 +24,61 @@ const sampleData = {
 };
 
 export function Dashboard() {
+  const navigate = useNavigate();
+  const [incidents, setIncidents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    fetchIncidents();
+  }, [filter]);
+
+  const fetchIncidents = async () => {
+    try {
+      setLoading(true);
+      const data = await incidentService.getAllIncidents();
+      setIncidents(data);
+    } catch (err) {
+      setError(err.message || 'Failed to fetch incidents');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusUpdate = async (incidentId, newStatus) => {
+    try {
+      await incidentService.updateIncidentStatus(incidentId, newStatus);
+      fetchIncidents(); // Refresh the list
+    } catch (err) {
+      setError(err.message || 'Failed to update incident status');
+    }
+  };
+
+  const handleQuickAction = (action) => {
+    switch (action) {
+      case 'addChild':
+        navigate('/enroll-child');
+        break;
+      case 'registerBabysitter':
+        navigate('/babysitter-registration');
+        break;
+      case 'generateReport':
+        navigate('/reports');
+        break;
+      case 'recordExpense':
+        navigate('/finance');
+        break;
+      default:
+        break;
+    }
+  };
+
+  const filteredIncidents = incidents.filter(incident => {
+    if (filter === 'all') return true;
+    return incident.severity === filter;
+  });
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -48,7 +108,7 @@ export function Dashboard() {
         />
         <QuickStatCard 
           title="Today's Income" 
-          value={`$${sampleData.todayIncome.toLocaleString()}`}
+          value={formatCurrency(sampleData.todayIncome)}
           description="Daily revenue"
           icon={<IncomeIcon />}
           trend="up"
@@ -56,7 +116,7 @@ export function Dashboard() {
         />
         <QuickStatCard 
           title="Pending Payments" 
-          value={`$${sampleData.pendingPayments.toLocaleString()}`}
+          value={formatCurrency(sampleData.pendingPayments)}
           description="Awaiting processing"
           icon={<PaymentIcon />}
           trend="down"
@@ -66,7 +126,7 @@ export function Dashboard() {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Notifications */}
+        {/* Left Column - Notifications and Incidents */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-lg shadow p-6 mb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Recent Notifications</h2>
@@ -78,13 +138,91 @@ export function Dashboard() {
                     {notification.type === "warning" && <WarningIcon />}
                     {notification.type === "alert" && <AlertIcon />}
                   </div>
-                  <div className="flex-1">
+                  <div>
                     <p className="text-sm text-gray-800">{notification.message}</p>
                     <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
                   </div>
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Incident Reports Section */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-semibold text-gray-800">Incident Reports</h2>
+              <Select
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                className="w-48"
+              >
+                <option value="all">All Incidents</option>
+                <option value="low">Low Severity</option>
+                <option value="medium">Medium Severity</option>
+                <option value="high">High Severity</option>
+              </Select>
+            </div>
+
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {error}
+              </div>
+            )}
+
+            {loading ? (
+              <div className="text-center py-8">Loading incidents...</div>
+            ) : (
+              <div className="space-y-4">
+                {filteredIncidents.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    No incidents found
+                  </div>
+                ) : (
+                  filteredIncidents.map((incident) => (
+                    <div
+                      key={incident.id}
+                      className="bg-white p-4 rounded-lg border border-gray-200"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-semibold">Child ID: {incident.childId}</h3>
+                          <p className="text-sm text-gray-500">
+                            Type: {incident.incidentType}
+                          </p>
+                          <p className="mt-2">{incident.description}</p>
+                          <p className="text-sm mt-2">
+                            Action Taken: {incident.actionTaken}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <span className={`px-2 py-1 rounded text-sm ${
+                            incident.severity === 'high' ? 'bg-red-100 text-red-800' :
+                            incident.severity === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-green-100 text-green-800'
+                          }`}>
+                            {incident.severity}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mt-4 flex justify-end space-x-2">
+                        <Button
+                          onClick={() => handleStatusUpdate(incident.id, 'resolved')}
+                          className="bg-green-500 hover:bg-green-600"
+                        >
+                          Mark Resolved
+                        </Button>
+                        <Button
+                          onClick={() => handleStatusUpdate(incident.id, 'in_progress')}
+                          className="bg-blue-500 hover:bg-blue-600"
+                        >
+                          In Progress
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -93,21 +231,33 @@ export function Dashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
             <div className="space-y-3">
-              <button className="w-full flex items-center justify-center p-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+              <button
+                onClick={() => handleQuickAction('addChild')}
+                className="w-full flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50"
+              >
                 <AddChildIcon />
-                <span className="ml-2">Add New Child</span>
+                <span className="ml-3">Add New Child</span>
               </button>
-              <button className="w-full flex items-center justify-center p-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+              <button
+                onClick={() => handleQuickAction('registerBabysitter')}
+                className="w-full flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50"
+              >
                 <AddBabysitterIcon />
-                <span className="ml-2">Register Babysitter</span>
+                <span className="ml-3">Register Babysitter</span>
               </button>
-              <button className="w-full flex items-center justify-center p-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
+              <button
+                onClick={() => handleQuickAction('generateReport')}
+                className="w-full flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50"
+              >
                 <ReportIcon />
-                <span className="ml-2">Generate Report</span>
+                <span className="ml-3">Generate Report</span>
               </button>
-              <button className="w-full flex items-center justify-center p-3 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors">
+              <button
+                onClick={() => handleQuickAction('recordExpense')}
+                className="w-full flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50"
+              >
                 <ExpenseIcon />
-                <span className="ml-2">Record Expense</span>
+                <span className="ml-3">Record Expense</span>
               </button>
             </div>
           </div>
