@@ -1,11 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
+  darkMode: 'class',
   content: [
     './pages/**/*.{js,jsx}',
     './components/**/*.{js,jsx}',
     './app/**/*.{js,jsx}',
-    './src/**/*.{js,jsx}',
+    './src/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
     container: {
@@ -23,11 +23,15 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          light: '#3b82f6', // blue-500
+          DEFAULT: '#2563eb', // blue-600
+          dark: '#1d4ed8', // blue-700
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          light: '#f59e0b', // amber-500
+          DEFAULT: '#d97706', // amber-600
+          dark: '#b45309', // amber-700
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
@@ -49,6 +53,12 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        dark: {
+          bg: '#1a1a1a',
+          surface: '#2d2d2d',
+          text: '#ffffff',
+          border: '#404040',
         },
       },
       borderRadius: {

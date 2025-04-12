@@ -4,6 +4,8 @@ import { Toaster } from 'sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppRoutes } from './routes';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import TopBar from './components/TopBar';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -20,12 +22,17 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <Toaster position="top-right" />
-          <AppRoutes />
-        </AuthProvider>
-      </BrowserRouter>
+      <ThemeProvider>
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+          <TopBar />
+          <BrowserRouter>
+            <AuthProvider>
+              <Toaster position="top-right" />
+              <AppRoutes />
+            </AuthProvider>
+          </BrowserRouter>
+        </div>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

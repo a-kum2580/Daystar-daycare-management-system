@@ -13,16 +13,16 @@ export function DashboardLayout({ children }) {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <SideBar />
-      <main className="flex-1 overflow-auto p-6 bg-gray-50">
+      <main className="flex-1 overflow-auto p-6 bg-gray-50 dark:bg-gray-900">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
             {user?.role === 'manager' ? 'Manager Dashboard' : 'Babysitter Dashboard'}
           </h1>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 text-sm text-red-600 hover:text-red-800"
+            className="px-4 py-2 text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
           >
             Logout
           </button>

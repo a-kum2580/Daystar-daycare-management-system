@@ -114,7 +114,7 @@ export function Notifications() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Notifications & Alerts</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Notifications & Alerts</h1>
         <div className="flex gap-4">
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
@@ -145,11 +145,11 @@ export function Notifications() {
 
       <div className="grid grid-cols-1 gap-6">
         {filteredNotifications.map((notification) => (
-          <Card key={notification.id} className="hover:shadow-lg transition-shadow">
+          <Card key={notification.id} className="hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
             <CardHeader className="flex flex-row items-center justify-between">
               <div className="flex items-center gap-3">
                 {getNotificationIcon(notification.type)}
-                <CardTitle className="text-lg">
+                <CardTitle className="text-lg dark:text-white">
                   {notification.childName} - {notification.parentName}
                 </CardTitle>
               </div>
@@ -157,9 +157,9 @@ export function Notifications() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <p className="text-gray-600">{notification.message}</p>
+                <p className="text-gray-600 dark:text-gray-300">{notification.message}</p>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
                     {new Date(notification.timestamp).toLocaleString()}
                   </span>
                   {notification.status === 'pending' && (

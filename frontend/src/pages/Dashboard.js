@@ -128,19 +128,19 @@ export function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Notifications and Incidents */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Recent Notifications</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Recent Notifications</h2>
             <div className="space-y-4">
               {sampleData.notifications.map((notification) => (
-                <div key={notification.id} className="flex items-start p-3 rounded-lg border border-gray-100 hover:bg-gray-50">
+                <div key={notification.id} className="flex items-start p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                   <div className="mr-3 mt-1">
                     {notification.type === "info" && <InfoIcon />}
                     {notification.type === "warning" && <WarningIcon />}
                     {notification.type === "alert" && <AlertIcon />}
                   </div>
                   <div>
-                    <p className="text-sm text-gray-800">{notification.message}</p>
-                    <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                    <p className="text-sm text-gray-800 dark:text-gray-200">{notification.message}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{notification.time}</p>
                   </div>
                 </div>
               ))}
@@ -148,13 +148,13 @@ export function Dashboard() {
           </div>
 
           {/* Incident Reports Section */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-semibold text-gray-800">Incident Reports</h2>
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Incident Reports</h2>
               <Select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="w-48"
+                className="w-48 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               >
                 <option value="all">All Incidents</option>
                 <option value="low">Low Severity</option>
@@ -164,41 +164,43 @@ export function Dashboard() {
             </div>
 
             {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              <div className="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4">
                 {error}
               </div>
             )}
 
             {loading ? (
-              <div className="text-center py-8">Loading incidents...</div>
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading incidents...</div>
             ) : (
               <div className="space-y-4">
                 {filteredIncidents.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                     No incidents found
                   </div>
                 ) : (
                   filteredIncidents.map((incident) => (
                     <div
                       key={incident.id}
-                      className="bg-white p-4 rounded-lg border border-gray-200"
+                      className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700"
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="font-semibold">Child ID: {incident.childId}</h3>
-                          <p className="text-sm text-gray-500">
+                          <h3 className="font-semibold text-gray-800 dark:text-white">Child ID: {incident.childId}</h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
                             Type: {incident.incidentType}
                           </p>
-                          <p className="mt-2">{incident.description}</p>
-                          <p className="text-sm mt-2">
+                          <p className="mt-2 text-gray-800 dark:text-gray-200">{incident.description}</p>
+                          <p className="text-sm mt-2 text-gray-600 dark:text-gray-300">
                             Action Taken: {incident.actionTaken}
                           </p>
                         </div>
                         <div className="text-right">
                           <span className={`px-2 py-1 rounded text-sm ${
-                            incident.severity === 'high' ? 'bg-red-100 text-red-800' :
-                            incident.severity === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-green-100 text-green-800'
+                            incident.severity === 'high' 
+                              ? 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300' 
+                              : incident.severity === 'medium' 
+                                ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' 
+                                : 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300'
                           }`}>
                             {incident.severity}
                           </span>
@@ -207,13 +209,13 @@ export function Dashboard() {
                       <div className="mt-4 flex justify-end space-x-2">
                         <Button
                           onClick={() => handleStatusUpdate(incident.id, 'resolved')}
-                          className="bg-green-500 hover:bg-green-600"
+                          className="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
                         >
                           Mark Resolved
                         </Button>
                         <Button
                           onClick={() => handleStatusUpdate(incident.id, 'in_progress')}
-                          className="bg-blue-500 hover:bg-blue-600"
+                          className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
                         >
                           In Progress
                         </Button>
@@ -228,36 +230,36 @@ export function Dashboard() {
 
         {/* Right Column - Quick Actions */}
         <div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Quick Actions</h2>
             <div className="space-y-3">
               <button
                 onClick={() => handleQuickAction('addChild')}
-                className="w-full flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50"
+                className="w-full flex items-center p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
               >
                 <AddChildIcon />
-                <span className="ml-3">Add New Child</span>
+                <span className="ml-3 text-gray-800 dark:text-gray-200">Add New Child</span>
               </button>
               <button
                 onClick={() => handleQuickAction('registerBabysitter')}
-                className="w-full flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50"
+                className="w-full flex items-center p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
               >
                 <AddBabysitterIcon />
-                <span className="ml-3">Register Babysitter</span>
+                <span className="ml-3 text-gray-800 dark:text-gray-200">Register Babysitter</span>
               </button>
               <button
                 onClick={() => handleQuickAction('generateReport')}
-                className="w-full flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50"
+                className="w-full flex items-center p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
               >
                 <ReportIcon />
-                <span className="ml-3">Generate Report</span>
+                <span className="ml-3 text-gray-800 dark:text-gray-200">Generate Report</span>
               </button>
               <button
                 onClick={() => handleQuickAction('recordExpense')}
-                className="w-full flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50"
+                className="w-full flex items-center p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
               >
                 <ExpenseIcon />
-                <span className="ml-3">Record Expense</span>
+                <span className="ml-3 text-gray-800 dark:text-gray-200">Record Expense</span>
               </button>
             </div>
           </div>
@@ -270,10 +272,10 @@ export function Dashboard() {
 // Helper Components
 function QuickStatCard({ title, value, description, icon, trend, color }) {
   const colorClasses = {
-    blue: "bg-blue-50 text-blue-700",
-    green: "bg-green-50 text-green-700",
-    yellow: "bg-yellow-50 text-yellow-700",
-    red: "bg-red-50 text-red-700",
+    blue: "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300",
+    green: "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300",
+    yellow: "bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300",
+    red: "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300",
   };
 
   const trendIcons = {
@@ -295,18 +297,24 @@ function QuickStatCard({ title, value, description, icon, trend, color }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div className="flex items-center justify-between">
         <div className={`p-2 rounded-full ${colorClasses[color]}`}>
           {icon}
         </div>
-        <div className={`flex items-center ${trend === "up" ? "text-green-500" : trend === "down" ? "text-red-500" : "text-gray-500"}`}>
+        <div className={`flex items-center ${
+          trend === "up" 
+            ? "text-green-500 dark:text-green-400" 
+            : trend === "down" 
+              ? "text-red-500 dark:text-red-400" 
+              : "text-gray-500 dark:text-gray-400"
+        }`}>
           {trendIcons[trend]}
         </div>
       </div>
-      <h3 className="text-lg font-semibold text-gray-800 mt-4">{title}</h3>
-      <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
-      <p className="text-sm text-gray-500 mt-1">{description}</p>
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mt-4">{title}</h3>
+      <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{value}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{description}</p>
     </div>
   );
 }
