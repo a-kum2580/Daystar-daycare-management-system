@@ -1,43 +1,47 @@
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
-
-// Load environment variables
-dotenv.config();
-
-// Import routes
-const babysitterRoutes = require('./routes/babysitterRoutes');
+const sequelize = require('./config/database');
 const childRoutes = require('./routes/childRoutes');
-const parentRoutes = require('./routes/parentRoutes');
-const financialRoutes = require('./routes/financialRoutes');
-const attendanceRoutes = require('./routes/attendanceRoutes');
-const incidentRoutes = require('./routes/incidentRoutes');
 const authRoutes = require('./routes/authRoutes');
 
-// Initialize express app
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // Frontend URL
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/babysitters', babysitterRoutes);
 app.use('/api/children', childRoutes);
-app.use('/api/parents', parentRoutes);
-app.use('/api/financial', financialRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use('/api/incidents', incidentRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
+  res.status(500).json({ message: 'Something went wrong!', error: err.message });
 });
 
-// Start server
+// Database connection and server start
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-}); 
+
+sequelize.authenticate()
+  .then(() => {
+    console.log('Database connection has been established successfully.');
+    return sequelize.sync({ alter: true }); // This will update the database schema
+  })
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
+
+module.exports = app; 

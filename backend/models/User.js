@@ -1,72 +1,67 @@
-const pool = require('../config/database');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 const bcrypt = require('bcryptjs');
 
-class User {
-  static async create({ username, password, role }) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const [result] = await pool.execute(
-      'INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
-      [username, hashedPassword, role]
-    );
-    return result.insertId;
-  }
-
-  static async findByUsername(username) {
-    const [rows] = await pool.execute(
-      'SELECT * FROM users WHERE username = ?',
-      [username]
-    );
-    return rows[0];
-  }
-
-  static async findById(id) {
-    const [rows] = await pool.execute(
-      'SELECT * FROM users WHERE id = ?',
-      [id]
-    );
-    return rows[0];
-  }
-
-  static async update(id, { username, password, role }) {
-    const updates = [];
-    const values = [];
-
-    if (username) {
-      updates.push('username = ?');
-      values.push(username);
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    validate: {
+      isEmail: true
     }
-
-    if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      updates.push('password = ?');
-      values.push(hashedPassword);
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  role: {
+    type: DataTypes.ENUM('admin', 'staff', 'parent'),
+    allowNull: false
+  },
+  firstName: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  lastName: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  phoneNumber: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  status: {
+    type: DataTypes.ENUM('active', 'inactive'),
+    defaultValue: 'active'
+  }
+}, {
+  hooks: {
+    beforeCreate: async (user) => {
+      if (user.password) {
+        user.password = await bcrypt.hash(user.password, 10);
+      }
+    },
+    beforeUpdate: async (user) => {
+      if (user.changed('password')) {
+        user.password = await bcrypt.hash(user.password, 10);
+      }
     }
-
-    if (role) {
-      updates.push('role = ?');
-      values.push(role);
-    }
-
-    if (updates.length === 0) return null;
-
-    values.push(id);
-    const query = `UPDATE users SET ${updates.join(', ')} WHERE id = ?`;
-    
-    const [result] = await pool.execute(query, values);
-    return result.affectedRows > 0;
   }
+});
 
-  static async delete(id) {
-    const [result] = await pool.execute(
-      'DELETE FROM users WHERE id = ?',
-      [id]
-    );
-    return result.affectedRows > 0;
-  }
-
-  static async comparePassword(password, hashedPassword) {
-    return bcrypt.compare(password, hashedPassword);
-  }
-}
+User.prototype.validatePassword = async function(password) {
+  return bcrypt.compare(password, this.password);
+};
 
 module.exports = User; 
