@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "daystar_user",
+    "password": "daystar123",
+    "database": "daystar_daycare",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "daystar_user",
+    "password": "daystar123",
+    "database": "daystar_daycare_test",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "daystar_user",
+    "password": "daystar123",
+    "database": "daystar_daycare",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+}

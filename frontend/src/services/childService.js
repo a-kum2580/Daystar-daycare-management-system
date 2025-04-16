@@ -1,161 +1,86 @@
-import api from './api.config';
+import api from './api';
 
-// Mock data for demonstration
-const mockChildren = [
-  {
-    id: '1',
-    firstName: 'John',
-    lastName: 'Doe',
-    dateOfBirth: '2020-01-01',
-    gender: 'male',
-    parentName: 'Jane Doe',
-    parentPhone: '+256 700 123 456',
-    parentEmail: 'jane@example.com',
-    address: '123 Main St, Kampala',
-    emergencyContact: 'Mike Doe',
-    medicalNotes: 'None',
-    allergies: 'None',
-    medications: 'None',
-    specialNeeds: 'None',
-    enrollmentDate: '2023-01-01',
-    sessionType: 'full-day'
-  },
-  // Add more mock children as needed
-];
-
-const mockAttendance = [
-  {
-    childId: '1',
-    childName: 'John Doe',
-    sessionType: 'full-day',
-    checkInTime: '08:00',
-    checkOutTime: '16:00',
-    status: 'present'
-  },
-  // Add more mock attendance records as needed
-];
-
-const mockIncidents = [
-  {
-    id: '1',
-    childId: '1',
-    incidentType: 'health',
-    date: '2023-12-01',
-    time: '10:30',
-    description: 'Child had a mild fever',
-    actionTaken: 'Given medication and monitored',
-    reportedBy: 'Sarah Smith',
-    severity: 'low',
-    followUpRequired: true,
-    followUpNotes: 'Parent informed, will monitor temperature'
-  },
-  // Add more mock incidents as needed
-];
-
-export const childService = {
-  // Get all children
+const childService = {
   getAllChildren: async () => {
     try {
-      // In a real application, this would make an API call
-      return mockChildren;
-    } catch (error) {
-      console.error('Error fetching children:', error);
-      throw new Error('Failed to fetch children list');
-    }
-  },
-
-  // Get a single child by ID
-  getChild: async (childId) => {
-    const response = await api.get(`/children/${childId}`);
-    return response.data;
-  },
-
-  // Create a new child
-  createChild: async (childData) => {
-    try {
-      // In a real application, this would make an API call
-      console.log('Creating child:', childData);
-      return { success: true, data: { ...childData, id: Date.now().toString() } };
-    } catch (error) {
-      console.error('Error creating child:', error);
-      throw new Error('Failed to create child record');
-    }
-  },
-
-  // Update a child
-  updateChild: async (childId, childData) => {
-    try {
-      // In a real application, this would make an API call
-      console.log('Updating child:', childId, childData);
-      const response = await api.put(`/children/${childId}`, childData);
+      const response = await api.get('/children');
       return response.data;
     } catch (error) {
-      console.error('Error updating child:', error);
-      throw new Error('Failed to update child record');
+      throw error.response?.data || { message: 'Failed to fetch children' };
     }
   },
 
-  // Delete a child
-  deleteChild: async (childId) => {
-    const response = await api.delete(`/children/${childId}`);
-    return response.data;
-  },
-
-  getChildById: async (childId) => {
+  getChildById: async (id) => {
     try {
-      // In a real application, this would make an API call
-      const child = mockChildren.find(child => child.id === childId);
-      if (!child) {
-        throw new Error('Child not found');
-      }
-      return child;
+      const response = await api.get(`/children/${id}`);
+      return response.data;
     } catch (error) {
-      console.error('Error fetching child:', error);
-      throw new Error('Failed to fetch child data');
+      throw error.response?.data || { message: 'Failed to fetch child details' };
     }
   },
 
-  // Attendance Tracking
-  getAttendance: async (date) => {
+  createChild: async (childData) => {
     try {
-      // In a real application, this would make an API call with the date parameter
-      return mockAttendance;
+      const response = await api.post('/children', childData);
+      return response.data;
     } catch (error) {
-      console.error('Error fetching attendance:', error);
-      throw new Error('Failed to fetch attendance data');
+      throw error.response?.data || { message: 'Failed to create child record' };
     }
   },
 
-  updateAttendance: async (childId, date, status) => {
+  updateChild: async (id, childData) => {
     try {
-      // In a real application, this would make an API call
-      console.log('Updating attendance:', { childId, date, status });
-      return { success: true };
+      const response = await api.put(`/children/${id}`, childData);
+      return response.data;
     } catch (error) {
-      console.error('Error updating attendance:', error);
-      throw new Error('Failed to update attendance record');
+      throw error.response?.data || { message: 'Failed to update child record' };
     }
   },
 
-  // Incident Reporting
-  reportIncident: async (incidentData) => {
+  deleteChild: async (id) => {
     try {
-      // In a real application, this would make an API call
-      console.log('Reporting incident:', incidentData);
-      return { success: true, data: { ...incidentData, id: Date.now().toString() } };
+      const response = await api.delete(`/children/${id}`);
+      return response.data;
     } catch (error) {
-      console.error('Error reporting incident:', error);
-      throw new Error('Failed to report incident');
+      throw error.response?.data || { message: 'Failed to delete child record' };
     }
   },
 
-  getIncidents: async (childId) => {
+  getChildAttendance: async (id) => {
     try {
-      // In a real application, this would make an API call
-      return mockIncidents.filter(incident => incident.childId === childId);
+      const response = await api.get(`/children/${id}/attendance`);
+      return response.data;
     } catch (error) {
-      console.error('Error fetching incidents:', error);
-      throw new Error('Failed to fetch incident records');
+      throw error.response?.data || { message: 'Failed to fetch child attendance' };
+    }
+  },
+
+  updateChildAttendance: async (id, attendanceData) => {
+    try {
+      const response = await api.post(`/children/${id}/attendance`, attendanceData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to update child attendance' };
+    }
+  },
+
+  getChildProgress: async (id) => {
+    try {
+      const response = await api.get(`/children/${id}/progress`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to fetch child progress' };
+    }
+  },
+
+  updateChildProgress: async (id, progressData) => {
+    try {
+      const response = await api.post(`/children/${id}/progress`, progressData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to update child progress' };
     }
   }
-}; 
+};
+
+export default childService; 
